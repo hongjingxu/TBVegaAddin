@@ -33,7 +33,7 @@ namespace VegaAddins.Qsar
         public void Dispose()
         {
         }
-
+ 
         public TbScalarData Calculate(ITbBasket target)
         {
            
@@ -129,16 +129,8 @@ namespace VegaAddins.Qsar
                 Mockdescriptordata
               }
                   };
-            //TODO add here other indexes but first chainge java code
-            TbData ADIdata = new TbData(new TbUnit(TbScale.EmptyRatioScale.Name, string.Empty), double.Parse(this.runmodel(target, "adi", Modelinfo)));
-            Dictionary<string, TbData> ADImetadata = new Dictionary<string, TbData>()
-      {
-        {
-          "Applicability Domain Index",
-          ADIdata
-        }
-
-      };
+            //run method Retrieve ADI, to retrieve all adi indexes
+            Dictionary<string, TbData> ADImetadata = this.RetrieveAdi(target,Modelinfo);
             TbMetadata metadata = new TbMetadata((IReadOnlyDictionary<string, string>)AdditionalMetadata, (IReadOnlyDictionary<string, TbData>)ADImetadata);
 
             //return new PredictionAddin(predictedTbData, predictionDescription, xData);
@@ -183,6 +175,35 @@ namespace VegaAddins.Qsar
             java.lang.String stdout = VegaDockInterface.@getValues(tag, output, target.Chemical.Smiles);
            return stdout;
         }
+        public Dictionary<string, TbData> RetrieveAdi(ITbBasket target, Dictionary<string, string> Modelinfo)
+        {
+            Dictionary<string, TbData> Adidictionary = new Dictionary<string, TbData>();
+            string tag = this.Modelinfo["tag"];
+            var setup = new BridgeSetup(false);
+            //setup.AddAllJarsClassPath(@"B:\ToolboxAddinExamples\lib");
+
+            setup.AddAllJarsClassPath(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location));
+            Bridge.CreateJVM(setup);
+            Bridge.RegisterAssembly(typeof(AdiArray).Assembly);
+            java.util.List list = AdiArray.getADI(tag, target.Chemical.Smiles);
+            if (list.size()==0)
+            {
+                Adidictionary.Add("ADI", new TbData(new TbUnit(TbScale.EmptyRatioScale.Name, string.Empty), new double?()));
+                return Adidictionary;
+            }
+
+            //create the iterator
+            for (int i = 0; i < list.size(); i++)
+            {
+
+                AdiArray adicomponent = (AdiArray)list.get(i);
+                Adidictionary.Add(adicomponent.AdiName, new TbData(new TbUnit(TbScale.EmptyRatioScale.Name, string.Empty), adicomponent.AdiValue));
+            }
+            
+            return Adidictionary;
+        }
+
+
         public double BoxCox(double lambda, double value)
         {
             return Math.Pow( value * lambda + 1.0, 1.0 / lambda);

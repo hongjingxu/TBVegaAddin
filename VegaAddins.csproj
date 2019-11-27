@@ -45,8 +45,9 @@
       <HintPath>B:\Program Files (x86)\QSAR Toolbox\QSAR Toolbox 4.4\Toolbox Server\Bin\Toolbox.Docking.Api.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="VegaDockCLI.j4n">
-      <HintPath>.\VegaDockCLI.j4n.dll</HintPath>
+    <Reference Include="VegaDockCLI.j4n, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\VegaDockCLI.j4n.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
