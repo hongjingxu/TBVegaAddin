@@ -184,12 +184,12 @@ namespace VegaAddins.Qsar
 
             setup.AddAllJarsClassPath(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location));
             Bridge.CreateJVM(setup);
+
             Bridge.RegisterAssembly(typeof(AdiArray).Assembly);
             java.util.List list = AdiArray.getADI(tag, target.Chemical.Smiles);
             if (list.size()==0)
             {
-                Adidictionary.Add("ADI", new TbData(new TbUnit(TbScale.EmptyRatioScale.Name, string.Empty), new double?()));
-                return Adidictionary;
+                                return Adidictionary;
             }
 
             //create the iterator
