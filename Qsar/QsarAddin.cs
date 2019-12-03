@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Toolbox.Docking.Api.Control;
 using Toolbox.Docking.Api.Data;
 using Toolbox.Docking.Api.Objects;
@@ -33,18 +34,21 @@ namespace VegaAddins.Qsar
         public void Dispose()
         {
         }
- 
+
         public TbScalarData Calculate(ITbBasket target)
         {
-           
+            Dictionary<string, string> ModelPred = this.RetrieveModelPreD(target, Modelinfo);
             
-            string stringvalue = runmodel(target, "prediction", Modelinfo);
+            if (ModelPred.ContainsKey("error"))
+                throw new Exception(ModelPred["error"]);
 
-            //check if the value is not predicted
+            string stringvalue = ModelPred["prediction"];
 
-            if (stringvalue == "-999.00")
-                //TODO add explanation to the error
-                throw new Exception("The model is unable to give any prediction");
+            ////check if the value is not predicted
+
+            //if (string.Equals(stringvalue, "-999.00") | string.Equals(stringvalue, "error", StringComparison.OrdinalIgnoreCase))
+            //    //TODO add explanation to the error
+            //    throw new Exception("The model is unable to give any prediction");
               
 
 
@@ -82,17 +86,18 @@ namespace VegaAddins.Qsar
         public ITbPrediction Predict(ITbBasket target)
         {
             target.WorkTask.TbToken.ThrowIfCancellationRequested();
-
+            
             //understand how to pass scalar predictions
             TbData predictedTbData = (TbData)Calculate(target);
             // var predictedTbData = new TbData(predictedScalarData.Unit, predictedScalarData.Value);
             //var targetLogKow =
             //    target.WorkTask.CalcService.CalculateParameter(_logKowDescriptor.Descriptor, null, target);
             //mock descriptor
-
+            Dictionary<string, string> ModelPred = this.RetrieveModelPreD(target, Modelinfo);
 
 
             TbData Mockdescriptordata = new TbData(this.qsarUnit, new double?());
+            //TODO pack additional metadata into an unique object and then predicton probably will be faster
             Dictionary<string, string> AdditionalMetadata = new Dictionary<string, string>()
         {
           {
@@ -102,25 +107,22 @@ namespace VegaAddins.Qsar
           },
                                           {
                     "Assessment",
-                 this.runmodel(target, "assessment", Modelinfo)
+                  ModelPred["assessment"]
         },
 
                 {
                     "Brief Explanation",
-                 this.runmodel(target, "assessment_verbose", Modelinfo)
+                     ModelPred["assessment_verbose"]
+
         },
 
                                                 {
                     "Analogues' SMILES",
-                 this.runmodel(target, "Similar_molecules_Smiles", Modelinfo).Replace(";","\n")
-        }
-                ,
-                                {
-                    "Message Error",
-                 this.runmodel(target, "error", Modelinfo)
-        }
+                    ModelPred["Similar_molecules_Smiles"].Replace(";","\n")
 
-        };
+        }
+                
+    };
 
             Dictionary<TbObjectId, TbData> matrixdescriptorvalues = new Dictionary<TbObjectId, TbData>()
             {
@@ -140,10 +142,15 @@ namespace VegaAddins.Qsar
 
         public bool IsRelevantToChemical(ITbBasket target, out string reason)
         {
-            string stringvalue = runmodel(target, "prediction", Modelinfo);
-            if (stringvalue == "-999.00")
+            if (Regex.IsMatch(target.TargetChemical.Smiles, @"\."))
             {
-                reason = "It's not possible to perform the prediction";
+                reason = "The model is not applicable because the compound is a disconnected structure";
+                return false;
+            }
+            Dictionary<string, string> ModelPred = RetrieveModelPreD(target, Modelinfo);
+            if (ModelPred.ContainsKey("error"))
+            {
+                reason = ModelPred["ADI"];
                 return false;
             }
             reason = (string)null;
@@ -153,13 +160,22 @@ namespace VegaAddins.Qsar
 
         public TbDomainStatus CheckDomain(ITbBasket target)
         {
-            
-            string DomainIndex = this.runmodel(target, "adi", Modelinfo);
-            if (DomainIndex== null)
+            Dictionary<string, string> ModelPred = RetrieveModelPreD(target, Modelinfo);
+
+            if (ModelPred.ContainsKey("error"))
             {
                 return TbDomainStatus.Undefined;
             }
-            return double.Parse(DomainIndex) > 0.5 ? TbDomainStatus.InDomain : TbDomainStatus.OutOfDomain;
+            double ADI;
+            try
+            {
+                ADI = double.Parse(ModelPred["ADI"]);
+            }
+            catch
+            {
+                return TbDomainStatus.Undefined;
+            }
+            return ADI > 0.7 ? TbDomainStatus.InDomain : TbDomainStatus.OutOfDomain;
         }
 
         public string runmodel(ITbBasket target,  string output, Dictionary<string, string> Modelinfo)
@@ -170,10 +186,38 @@ namespace VegaAddins.Qsar
 
             setup.AddAllJarsClassPath(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location));
             Bridge.CreateJVM(setup);
-            Bridge.RegisterAssembly(typeof(ModelsList).Assembly);
             Bridge.RegisterAssembly(typeof(VegaDockInterface).Assembly);
             java.lang.String stdout = VegaDockInterface.@getValues(tag, output, target.Chemical.Smiles);
            return stdout;
+        }
+        public Dictionary<string, string> RetrieveModelPreD(ITbBasket target, Dictionary<string, string> Modelinfo)
+        {
+            Dictionary<string, string> ModelPred = new Dictionary<string, string>();
+            string tag = this.Modelinfo["tag"];
+            var setup = new BridgeSetup(false);
+            //setup.AddAllJarsClassPath(@"B:\ToolboxAddinExamples\lib");
+
+            setup.AddAllJarsClassPath(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location));
+            Bridge.CreateJVM(setup);
+            Bridge.RegisterAssembly(typeof(VegaDockObject).Assembly);
+            VegaDockObject vdo = new VegaDockObject();
+            vdo.run(tag,target.Chemical.Smiles);
+
+            if (vdo.error.length() != 0)
+            {
+                ModelPred.Add("Error", vdo.error);
+                return ModelPred;
+            }
+            ModelPred.Add("prediction", vdo.prediction);
+            ModelPred.Add("assessment", vdo.assessment);
+            ModelPred.Add("assessment_verbose", vdo.assessment_verbose);
+            ModelPred.Add("Experimental", vdo.Experimental);
+            ModelPred.Add("ADI", vdo.ADI);
+            ModelPred.Add("Similar_molecules_index", vdo.Similar_molecules_index);
+            ModelPred.Add("Similar_molecules_smiles", vdo.Similar_molecules_smiles);
+
+
+            return ModelPred;
         }
         public Dictionary<string, TbData> RetrieveAdi(ITbBasket target, Dictionary<string, string> Modelinfo)
         {
@@ -189,6 +233,7 @@ namespace VegaAddins.Qsar
             java.util.List list = AdiArray.getADI(tag, target.Chemical.Smiles);
             if (list.size()==0)
             {
+               
                                 return Adidictionary;
             }
 

@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("VegaAddins")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Implementation of VEGA QSAR models into  QSAR Toolbox")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Cosimo Toma")]
 [assembly: AssemblyProduct("VegaAddins")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]
