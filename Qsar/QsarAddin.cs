@@ -35,9 +35,10 @@ namespace VegaAddins.Qsar
         {
         }
 
-        public TbScalarData Calculate(ITbBasket target)
+
+        private TbScalarData Calculate(ITbBasket target, out Dictionary<string, string>  ModelPred)
         {
-            Dictionary<string, string> ModelPred = this.RetrieveModelPreD(target, Modelinfo);
+            ModelPred = this.RetrieveModelPreD(target, Modelinfo);
             
             if (ModelPred.ContainsKey("error"))
                 throw new Exception(ModelPred["error"]);
@@ -49,17 +50,22 @@ namespace VegaAddins.Qsar
             //if (string.Equals(stringvalue, "-999.00") | string.Equals(stringvalue, "error", StringComparison.OrdinalIgnoreCase))
             //    //TODO add explanation to the error
             //    throw new Exception("The model is unable to give any prediction");
-              
+   
 
 
             //understand how to pass qualitative predictions
             if ( this.ScaleDeclaration is TbQualitativeScale scaleDeclaration)
-            {    
-             //   TbQualitativeScale scaleD = (TbQualitativeScale)this.ScaleDeclaration;
-            if (!scaleDeclaration.Labels.Any<string>((Func<string, bool>)(l => l.Equals(stringvalue, StringComparison.InvariantCultureIgnoreCase))))
-                throw new Exception(string.Format("\"{0}\" is not a prediction for the declared scale.", (object)stringvalue));
-
-                return (TbData)new TbData(new TbUnit(ScaleDeclaration.Name, stringvalue), new double?());
+            {
+                //   TbQualitativeScale scaleD = (TbQualitativeScale)this.ScaleDeclaration;
+                if (!scaleDeclaration.Labels.Any<string>((Func<string, bool>)(l => l.Equals(stringvalue, StringComparison.InvariantCultureIgnoreCase))))
+                {
+                    if (ModelPred["prediction"] != "-")
+                    {
+                        throw new Exception("Compound is not predicted, however has been provided the experimental value");
+                    }
+                    throw new Exception(string.Format("\"{0}\" is not a prediction for the declared scale.", stringvalue));
+                }
+            return (TbData)new TbData(new TbUnit(ScaleDeclaration.Name, stringvalue), new double?());
          }
 
             if (this.Modelinfo["Unit"] == "a-dimensional")
@@ -83,46 +89,39 @@ namespace VegaAddins.Qsar
                 return (TbData)new TbData(qsarUnit, value);
             }
         }
+        public  TbScalarData Calculate(ITbBasket target)
+        {
+            Dictionary<string, string> ModelPred;
+            return this.Calculate(target, out ModelPred);
+        }
         public ITbPrediction Predict(ITbBasket target)
         {
             target.WorkTask.TbToken.ThrowIfCancellationRequested();
-            
+            Dictionary<string, string> ModelPred;
             //understand how to pass scalar predictions
-            TbData predictedTbData = (TbData)Calculate(target);
+            TbData predictedTbData = (TbData)Calculate(target, out ModelPred);
             // var predictedTbData = new TbData(predictedScalarData.Unit, predictedScalarData.Value);
             //var targetLogKow =
             //    target.WorkTask.CalcService.CalculateParameter(_logKowDescriptor.Descriptor, null, target);
             //mock descriptor
-            Dictionary<string, string> ModelPred = this.RetrieveModelPreD(target, Modelinfo);
-
-
+            
             TbData Mockdescriptordata = new TbData(this.qsarUnit, new double?());
             //TODO pack additional metadata into an unique object and then predicton probably will be faster
+            
+
             Dictionary<string, string> AdditionalMetadata = new Dictionary<string, string>()
         {
           {
             "guide",
 
            this.Modelinfo["GuideUrl"]
-          },
-                                          {
-                    "Assessment",
-                  ModelPred["assessment"]
-        },
-
-                {
-                    "Brief Explanation",
-                     ModelPred["assessment_verbose"]
-
-        },
-
-                                                {
-                    "Analogues' SMILES",
-                    ModelPred["Similar_molecules_Smiles"].Replace(";","\n")
-
-        }
-                
-    };
+          } };
+            if (ModelPred.ContainsKey("assessment"))
+                AdditionalMetadata.Add("Assessment", ModelPred["assessment"]);
+            if (ModelPred.ContainsKey("assessment_verbose"))
+                AdditionalMetadata.Add("Brief Explanation", ModelPred["assessment_verbose"]);
+            if (ModelPred.ContainsKey("Similar_molecules_Smiles"))
+                AdditionalMetadata.Add("Analogues' SMILES", ModelPred["Similar_molecules_Smiles"]);
 
             Dictionary<TbObjectId, TbData> matrixdescriptorvalues = new Dictionary<TbObjectId, TbData>()
             {
@@ -142,7 +141,7 @@ namespace VegaAddins.Qsar
 
         public bool IsRelevantToChemical(ITbBasket target, out string reason)
         {
-            if (Regex.IsMatch(target.TargetChemical.Smiles, @"\."))
+            if (Regex.IsMatch(target.Chemical.Smiles, @"\."))
             {
                 reason = "The model is not applicable because the compound is a disconnected structure";
                 return false;
@@ -202,7 +201,7 @@ namespace VegaAddins.Qsar
             Bridge.RegisterAssembly(typeof(VegaDockObject).Assembly);
             VegaDockObject vdo = new VegaDockObject();
             vdo.run(tag,target.Chemical.Smiles);
-
+            //If modelfor some reason gives any error, just return the error
             if (vdo.error.length() != 0)
             {
                 ModelPred.Add("Error", vdo.error);
