@@ -39,8 +39,8 @@ namespace VegaAddins.Qsar
         {
             Dictionary<string, string> ModelPred = this.RetrieveModelPreD(target, Modelinfo);
 
-            if (ModelPred.ContainsKey("Error"))
-                throw new Exception(ModelPred["Error"]);
+            if (ModelPred.ContainsKey("error"))
+                throw new Exception(ModelPred["error"]);
 
             string stringvalue = ModelPred["prediction"];
 
@@ -95,7 +95,6 @@ namespace VegaAddins.Qsar
             //mock descriptor
             Dictionary<string, string> ModelPred = this.RetrieveModelPreD(target, Modelinfo);
 
-
             TbData Mockdescriptordata = new TbData(this.qsarUnit, new double?());
             //TODO pack additional metadata into an unique object and then predicton probably will be faster
 
@@ -105,7 +104,7 @@ namespace VegaAddins.Qsar
             "Guide name",
 
            this.Modelinfo["GuideUrl"]
-          } };
+          }  };
             if (ModelPred.ContainsKey("assessment"))
                 AdditionalMetadata.Add("Assessment", ModelPred["assessment"]);
             if (ModelPred.ContainsKey("assessment_verbose"))
@@ -131,8 +130,9 @@ namespace VegaAddins.Qsar
 
         public bool IsRelevantToChemical(ITbBasket target, out string reason)
         {
-            //Doesn't work, don't ask why
-            //if (Regex.IsMatch(target.Chemical.Smiles, @"\."))
+            //string smiles = target.Chemical.Smiles;
+            ////Doesn't work, don't ask why
+            //if (Regex.IsMatch(smiles, @"\."))
             //{
             //    reason = "The model is not applicable because the compound is a disconnected structure";
             //    return false;
@@ -140,7 +140,7 @@ namespace VegaAddins.Qsar
             Dictionary<string, string> ModelPred = RetrieveModelPreD(target, Modelinfo);
             if (ModelPred.ContainsKey("error"))
             {
-                reason = ModelPred["ADI"];
+                reason = ModelPred["error"];
                 return false;
             }
             reason = (string)null;
@@ -152,7 +152,7 @@ namespace VegaAddins.Qsar
         {
             Dictionary<string, string> ModelPred = RetrieveModelPreD(target, Modelinfo);
 
-            if (ModelPred.ContainsKey("Error"))
+            if (ModelPred.ContainsKey("error"))
             {
                 return TbDomainStatus.Undefined;
             }
@@ -195,7 +195,7 @@ namespace VegaAddins.Qsar
 
             if (vdo.error.length() != 0)
             {
-                ModelPred.Add("Error", vdo.error);
+                ModelPred.Add("error", vdo.error);
                 return ModelPred;
             }
             ModelPred.Add("prediction", vdo.prediction);
