@@ -130,13 +130,7 @@ namespace VegaAddins.Qsar
 
         public bool IsRelevantToChemical(ITbBasket target, out string reason)
         {
-            //string smiles = target.Chemical.Smiles;
-            ////Doesn't work, don't ask why
-            //if (Regex.IsMatch(smiles, @"\."))
-            //{
-            //    reason = "The model is not applicable because the compound is a disconnected structure";
-            //    return false;
-            //}
+
             Dictionary<string, string> ModelPred = RetrieveModelPreD(target, Modelinfo);
             if (ModelPred.ContainsKey("error"))
             {
@@ -145,6 +139,18 @@ namespace VegaAddins.Qsar
             }
             reason = (string)null;
             return true;
+        }
+        public bool IsDisconnected(ITbBasket target)
+        {
+            string smiles = target.Chemical.Smiles;
+            Regex regex = new Regex(@"\.");
+            //Doesn't work, don't ask why
+            if (regex.IsMatch(smiles))
+            {
+                return true;
+            }
+            return false;
+
         }
 
 
@@ -183,6 +189,12 @@ namespace VegaAddins.Qsar
         public Dictionary<string, string> RetrieveModelPreD(ITbBasket target, Dictionary<string, string> Modelinfo)
         {
             Dictionary<string, string> ModelPred = new Dictionary<string, string>();
+            if (IsDisconnected(target))
+            {
+                ModelPred.Add("error", "Unable to run the model. SMILES provided is a Disconnected Structure");
+                return ModelPred;
+            }
+
             string tag = this.Modelinfo["tag"];
             var setup = new BridgeSetup(false);
             //setup.AddAllJarsClassPath(@"B:\ToolboxAddinExamples\lib");
