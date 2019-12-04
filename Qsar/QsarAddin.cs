@@ -39,8 +39,8 @@ namespace VegaAddins.Qsar
         {
             Dictionary<string, string> ModelPred = this.RetrieveModelPreD(target, Modelinfo);
 
-            if (ModelPred.ContainsKey("error"))
-                throw new Exception(ModelPred["error"]);
+            if (ModelPred.ContainsKey("Error"))
+                throw new Exception(ModelPred["Error"]);
 
             string stringvalue = ModelPred["prediction"];
 
@@ -131,11 +131,12 @@ namespace VegaAddins.Qsar
 
         public bool IsRelevantToChemical(ITbBasket target, out string reason)
         {
-            if (Regex.IsMatch(target.TargetChemical.Smiles, @"\."))
-            {
-                reason = "The model is not applicable because the compound is a disconnected structure";
-                return false;
-            }
+            //Doesn't work, don't ask why
+            //if (Regex.IsMatch(target.Chemical.Smiles, @"\."))
+            //{
+            //    reason = "The model is not applicable because the compound is a disconnected structure";
+            //    return false;
+            //}
             Dictionary<string, string> ModelPred = RetrieveModelPreD(target, Modelinfo);
             if (ModelPred.ContainsKey("error"))
             {
