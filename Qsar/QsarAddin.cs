@@ -68,7 +68,7 @@ namespace VegaAddins.Qsar
 
                 double value = double.Parse(stringvalue, CultureInfo.InvariantCulture);
 
-                return (TbData)new TbData(new TbUnit(ScaleDeclaration.Name, "mol/L"), BoxCox(lambda, value));
+                return (TbData)new TbData(new TbUnit(ScaleDeclaration.Name, "mmol/L"), BoxCox(lambda, value));
 
                 //AFTER INTANTIATING ALL CLASSIFICATION MODELS RUN THIS   
                 //}

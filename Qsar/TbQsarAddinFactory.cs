@@ -88,6 +88,7 @@ namespace VegaAddins.Qsar
       Modelinfo["Endpoint location2"]
     };
             //deal with not reported duration key
+            //TODO understand if duration can be a range
             Tuple<string, TbData> durationKeyValuePair = new Tuple<string, TbData>("Duration", new TbData(new TbUnit(TbScale.EmptyRatioScale.Name, string.Empty), new double?(0.0)));
             if (Modelinfo["Duration(unit)"] != "")
             {
@@ -159,7 +160,7 @@ namespace VegaAddins.Qsar
               return   new TbOrdinalScale(Modelinfo["tag"], Modelinfo["UnitFamily"], Guid.Parse(Modelinfo["ClassesGUID"]), classes);
             }
 
-            if (Modelinfo["Unit"] == "Unknown")
+            if (Modelinfo["Unit"] == "Unknown"| Modelinfo["Unit"] == "no Unit")
             {
 
                 return TbRatioScale.EmptyRatioScale;
