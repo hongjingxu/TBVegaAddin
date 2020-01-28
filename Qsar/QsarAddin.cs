@@ -105,12 +105,15 @@ namespace VegaAddins.Qsar
 
            this.Modelinfo["GuideUrl"]
           }  };
+
             if (ModelPred.ContainsKey("assessment"))
                 AdditionalMetadata.Add("Assessment", ModelPred["assessment"]);
             if (ModelPred.ContainsKey("assessment_verbose"))
                 AdditionalMetadata.Add("Brief Explanation", ModelPred["assessment_verbose"]);
             if (ModelPred.ContainsKey("Similar_molecules_smiles"))
                 AdditionalMetadata.Add("Analogues' SMILES", ModelPred["Similar_molecules_smiles"]);
+            if (Modelinfo.ContainsKey("QMRFlink"))
+                AdditionalMetadata.Add("QMRF", Modelinfo["QMRFlink"]);
 
             Dictionary<TbObjectId, TbData> matrixdescriptorvalues = new Dictionary<TbObjectId, TbData>()
             {

@@ -13,21 +13,24 @@ namespace VegaAddins.Qsar
         
         public static Dictionary<string, string> getMetaDataValues(Dictionary<string, string> Modelinfo)
         {
-            return new Dictionary<string, string>()
-    {
-      {
+            Dictionary<string, string> dict = new Dictionary<string, string>()
+        {
+       {
         "Endpoint",
         Modelinfo["Endpoint"]
       },
       {
         "Effect",
         Modelinfo["Effect"]
-      },
-      {
-        "Test organisms (species)",
-        Modelinfo["Test organisms (species)"]
       }
-    };
+            };
+
+     if (Modelinfo["Test organisms (species)"] != "") {
+                dict.Add("Test organisms (species)", Modelinfo["Test organisms (species)"]);
+            }
+        
+
+    return dict;
         }
 
 

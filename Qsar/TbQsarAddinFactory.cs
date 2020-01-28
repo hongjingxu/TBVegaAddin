@@ -10,6 +10,8 @@ using Toolbox.Docking.Api.Objects;
 using Toolbox.Docking.Api.Objects.Qsar;
 using Toolbox.Docking.Api.Units;
 
+
+
 namespace VegaAddins.Qsar
 {
     public class TbQsarAddinFactory : ITbQsarFactory, ITbObjectFactory, ITbObjectFactoryDomain
@@ -63,7 +65,22 @@ namespace VegaAddins.Qsar
 
         public IReadOnlyList<QsarDescriptorInfo> XDescriptors { get; private set; }
 
-        public string QmrfLocation { get; private set; }
+
+        public string QmrfLocation
+        {
+            //getvega
+
+            //{
+            //    if (Modelinfo["QMRFlink"] != "null")
+            //    {
+            //        return Modelinfo["QMRFlink"];
+            //    }
+            //    return "https://www.vegahub.eu/vegahub-dwn/qmrf/qmrf-readme.txt";
+
+
+            //}
+            get { return System.Reflection.Assembly.GetExecutingAssembly().CodeBase.Replace("VegaAddins.dll", "guide/" + Modelinfo["GuideUrl"]); }
+        }
 
         public TbQsarStatistics Statistics
         {
@@ -72,6 +89,7 @@ namespace VegaAddins.Qsar
                 return QsarAddinDefinitions.M4RatioModelStatistics;
             }
         }
+
 
         public TbQsarAddinFactory(Dictionary<string, string> Modelinfo)
         {
