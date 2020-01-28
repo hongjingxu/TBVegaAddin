@@ -107,7 +107,7 @@ namespace VegaAddins.Qsar
     };
             //deal with not reported duration key
             //TODO understand if duration can be a range
-            Tuple<string, TbData> durationKeyValuePair = new Tuple<string, TbData>("Duration", new TbData(new TbUnit(TbScale.EmptyRatioScale.Name, string.Empty), new double?(0.0)));
+            Tuple<string, TbData> durationKeyValuePair = new Tuple<string, TbData>("Duration", new TbData(new TbUnit(TbScale.EmptyRatioScale.Name, string.Empty), new double?()));
             if (Modelinfo["Duration(unit)"] != "")
             {
                 durationKeyValuePair = new Tuple<string, TbData>("Duration", new TbData(new TbUnit(TbScale.Time.Name, Modelinfo["Duration(unit)"]),
@@ -169,6 +169,11 @@ namespace VegaAddins.Qsar
             if (Modelinfo["UnitFamily"] == "Mass concentration")
             {
                 return (TbScale)new TbRatioScale(TbScale.MassConcentration, Modelinfo["Unit"]);
+
+            }
+            if (Modelinfo["UnitFamily"] == "Molar concentration")
+            {
+                return (TbScale)new TbRatioScale(TbScale.MolarConcentration, Modelinfo["Unit"]);
 
             }
 
