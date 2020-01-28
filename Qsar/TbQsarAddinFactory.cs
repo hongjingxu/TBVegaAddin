@@ -176,6 +176,11 @@ namespace VegaAddins.Qsar
                 return (TbScale)new TbRatioScale(TbScale.MolarConcentration, Modelinfo["Unit"]);
 
             }
+            if (Modelinfo["UnitFamily"] == "Time")
+            {
+                return (TbScale)new TbRatioScale(TbScale.Time, Modelinfo["Unit"]);
+
+            }
 
             if (Modelinfo["Classes"] != "?")
                 {
