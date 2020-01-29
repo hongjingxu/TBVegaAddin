@@ -112,20 +112,21 @@ namespace VegaAddins.Qsar
             EndpointLocation = EndpointL;
             //deal with not reported duration key
             //TODO understand if duration can be a range
-            Tuple<string, TbData> durationKeyValuePair = new Tuple<string, TbData>("Duration", new TbData(new TbUnit(TbScale.EmptyRatioScale.Name, string.Empty), new double?()));
+            Metadata = new TbMetadata((IReadOnlyDictionary<string, string>)QsarAddinDefinitions.getMetaDataValues(Modelinfo), null);
             if (Modelinfo["Duration(unit)"] != "")
             {
-                durationKeyValuePair = new Tuple<string, TbData>("Duration", new TbData(new TbUnit(TbScale.Time.Name, Modelinfo["Duration(unit)"]),
+                Tuple<string, TbData> durationKeyValuePair  = new Tuple<string, TbData>("Duration", new TbData(new TbUnit(TbScale.Time.Name, Modelinfo["Duration(unit)"]),
                    double.Parse(Modelinfo["Duration(value)"])));
-            }
-
-            Metadata = new TbMetadata((IReadOnlyDictionary<string, string>)QsarAddinDefinitions.getMetaDataValues(Modelinfo), (IReadOnlyDictionary<string, TbData>)new Dictionary<string, TbData>()
+                Metadata = new TbMetadata((IReadOnlyDictionary<string, string>)QsarAddinDefinitions.getMetaDataValues(Modelinfo), (IReadOnlyDictionary<string, TbData>)new Dictionary<string, TbData>()
       {
         {
           durationKeyValuePair.Item1,
           durationKeyValuePair.Item2
         }
       });
+            }
+
+
             this.ScaleDeclaration = returnscale(Modelinfo);
 
         }
