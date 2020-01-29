@@ -18,14 +18,13 @@ namespace VegaAddins.Qsar
        {
         "Endpoint",
         Modelinfo["Endpoint"]
-      },
-      {
-        "Effect",
-        Modelinfo["Effect"]
-      }
-            };
+      } };
+            if (Modelinfo["Effect"] != "")
+            {
+                dict.Add("Effect", Modelinfo["Effect"]);
+            }
 
-     if (Modelinfo["Test organisms (species)"] != "") {
+            if (Modelinfo["Test organisms (species)"] != "") {
                 dict.Add("Test organisms (species)", Modelinfo["Test organisms (species)"]);
             }
         
