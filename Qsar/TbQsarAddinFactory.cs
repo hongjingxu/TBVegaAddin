@@ -176,11 +176,13 @@ namespace VegaAddins.Qsar
                 return (TbScale)new TbRatioScale(TbScale.MolarConcentration, Modelinfo["Unit"]);
 
             }
+            //Time Doesn't support Unit conversion TODO ask LMC how to add Unit conversion, for now convert in prediction
             if (Modelinfo["UnitFamily"] == "Time")
             {
-                return (TbScale)new TbRatioScale(TbScale.Time, Modelinfo["Unit"]);
+                return (TbScale)new TbRatioScale(TbScale.Time, "d");
 
             }
+            
 
             if (Modelinfo["Classes"] != "?")
                 {

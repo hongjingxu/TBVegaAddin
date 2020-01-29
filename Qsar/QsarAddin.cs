@@ -77,6 +77,14 @@ namespace VegaAddins.Qsar
                 //    return (TbData)new TbData(qsarUnit, runmodel(target, this.Modelinfo["tag"], "prediction"));
 
             }
+            //workaroud for the lack of conversion for Time unitfamily
+            if (this.Modelinfo["Unit"] == "log(days)")
+            {
+
+                double value = double.Parse(stringvalue, CultureInfo.InvariantCulture);
+
+                return (TbData)new TbData(new TbUnit(ScaleDeclaration.Name, "d"), Math.Pow(10, value));
+            }
             else
             {
                 double value = double.Parse(stringvalue, CultureInfo.InvariantCulture);
