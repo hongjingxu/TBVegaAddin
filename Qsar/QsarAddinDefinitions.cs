@@ -24,7 +24,8 @@ namespace VegaAddins.Qsar
                 dict.Add("Effect", Modelinfo["Effect"]);
             }
 
-            if (Modelinfo["Test organisms (species)"] != "") {
+            if (Modelinfo["Test organisms (species)"] != "")
+            {
                 dict.Add("Test organisms (species)", Modelinfo["Test organisms (species)"]);
             }
         
