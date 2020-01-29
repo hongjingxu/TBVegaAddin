@@ -100,11 +100,16 @@ namespace VegaAddins.Qsar
             //Here should be exctracted from data
             ObjectId = new TbObjectId("VEGA - "+ Modelinfo["Modelname"], new Guid(Modelinfo["Guid"]), new Version(1, 0));
             ObjectAbout = QsarAddinDefinitions.GetM4ObjectAbout(Modelinfo);
-            EndpointLocation = new List<string>()
+            List<string> EndpointL = new List<string>()
     {
       Modelinfo["Endpoint location1"],
       Modelinfo["Endpoint location2"]
     };
+            if (Modelinfo["Endpoint location3"] != "")
+            {
+                EndpointL.Add(Modelinfo["Endpoint location3"]);
+            }
+            EndpointLocation = EndpointL;
             //deal with not reported duration key
             //TODO understand if duration can be a range
             Tuple<string, TbData> durationKeyValuePair = new Tuple<string, TbData>("Duration", new TbData(new TbUnit(TbScale.EmptyRatioScale.Name, string.Empty), new double?()));
