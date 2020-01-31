@@ -19,6 +19,7 @@ namespace VegaAddins.Qsar
 
         private readonly Dictionary<string, string> Modelinfo;
 
+
         public TbObjectFlags Flags { get; }
 
         public QsarFlags QsarFlags
@@ -79,7 +80,17 @@ namespace VegaAddins.Qsar
 
 
             //}
-            get { return System.Reflection.Assembly.GetExecutingAssembly().CodeBase.Replace("VegaAddins.dll", "guide/" + Modelinfo["GuideUrl"]); }
+            //get { return System.Reflection.Assembly.GetExecutingAssembly().CodeBase.Replace("VegaAddins.dll", "guide/" + Modelinfo["GuideUrl"]); }
+            get
+            {
+                if (Modelinfo["QMRFlink"] != "null")
+                {
+                    return Modelinfo["QMRFlink"];
+                }
+                {
+                    return (string)null;
+                }
+            }
         }
 
         public TbQsarStatistics Statistics
@@ -98,7 +109,7 @@ namespace VegaAddins.Qsar
             //take info from excel (csv)
             Flags = TbObjectFlags.None;
             //Here should be exctracted from data
-            ObjectId = new TbObjectId("VEGA - "+ Modelinfo["Modelname"], new Guid(Modelinfo["Guid"]), new Version(1, 0));
+            ObjectId = new TbObjectId("VEGA - " + Modelinfo["Modelname"], new Guid(Modelinfo["Guid"]), new Version(1, 0));
             ObjectAbout = QsarAddinDefinitions.GetM4ObjectAbout(Modelinfo);
             List<string> EndpointL = new List<string>()
     {
@@ -115,7 +126,7 @@ namespace VegaAddins.Qsar
             Metadata = new TbMetadata((IReadOnlyDictionary<string, string>)QsarAddinDefinitions.getMetaDataValues(Modelinfo), null);
             if (Modelinfo["Duration(unit)"] != "")
             {
-                Tuple<string, TbData> durationKeyValuePair  = new Tuple<string, TbData>("Duration", new TbData(new TbUnit(TbScale.Time.Name, Modelinfo["Duration(unit)"]),
+                Tuple<string, TbData> durationKeyValuePair = new Tuple<string, TbData>("Duration", new TbData(new TbUnit(TbScale.Time.Name, Modelinfo["Duration(unit)"]),
                    double.Parse(Modelinfo["Duration(value)"])));
                 Metadata = new TbMetadata((IReadOnlyDictionary<string, string>)QsarAddinDefinitions.getMetaDataValues(Modelinfo), (IReadOnlyDictionary<string, TbData>)new Dictionary<string, TbData>()
       {
@@ -131,7 +142,7 @@ namespace VegaAddins.Qsar
 
         }
 
-            public bool InitFactory(IList<string> errorLog, ITbInitTask initTask)
+        public bool InitFactory(IList<string> errorLog, ITbInitTask initTask)
         {
             ////TODO add all units
 
@@ -165,7 +176,7 @@ namespace VegaAddins.Qsar
         {
             if (Modelinfo["Unit"] == "a-dimensional")
             {
-            return (TbScale)new TbRatioScale(TbScale.MolarConcentration, "mol/L");
+                return (TbScale)new TbRatioScale(TbScale.MolarConcentration, "mol/L");
             }
             //generalize with unit family
             if (Modelinfo["Endpoint"] == "BCF")
@@ -188,15 +199,15 @@ namespace VegaAddins.Qsar
                 return (TbScale)new TbRatioScale(TbScale.Time, "d");
 
             }
-            
+
 
             if (Modelinfo["Classes"] != "?")
-                {
-                    string[] classes = Modelinfo["Classes"].Split(new[] { ";" }, StringSplitOptions.None); ;
-              return   new TbOrdinalScale(Modelinfo["tag"], Modelinfo["UnitFamily"], Guid.Parse(Modelinfo["ClassesGUID"]), classes);
+            {
+                string[] classes = Modelinfo["Classes"].Split(new[] { ";" }, StringSplitOptions.None); ;
+                return new TbOrdinalScale(Modelinfo["tag"], Modelinfo["UnitFamily"], Guid.Parse(Modelinfo["ClassesGUID"]), classes);
             }
 
-            if (Modelinfo["Unit"] == "Unknown"| Modelinfo["Unit"] == "no Unit")
+            if (Modelinfo["Unit"] == "Unknown" | Modelinfo["Unit"] == "no Unit")
             {
 
                 return TbRatioScale.EmptyRatioScale;

@@ -51,6 +51,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Qsar\SetRetriever.cs" />
     <Compile Include="VegaAddin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Qsar\PredictionAddin.cs" />

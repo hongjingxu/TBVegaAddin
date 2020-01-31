@@ -8,12 +8,70 @@ using Toolbox.Docking.Api.Units;
 
 namespace VegaAddins.Qsar
 {
+   
     public static class QsarAddinDefinitions
     {
-        
+       
+
         public static Dictionary<string, string> getMetaDataValues(Dictionary<string, string> Modelinfo)
         {
-            Dictionary<string, string> dict = new Dictionary<string, string>()
+            string[] Metadatalist = new string[] {
+            "Endpoint comment",
+            "Test type",
+            "Sex",
+            "Route of administration",
+            "Organ",
+            "Gene name",
+            "Strain",
+            "Metabolic activation",
+            "Test specificity",
+            "Test condition",
+            "Type of method",
+            "Assay provider",
+            "Test guideline",
+            "Reference",
+            "Reference Link",
+            "n(Train)",
+            "n(Invisible training)",
+            "n(Internal Valid)",
+            "n(Calibration)",
+            "n(Test)",
+            "R2(Train)",
+            "RMSE(Train)",
+            "R2adj(Train)",
+            "Q2(Train)",
+            "Fisher(Train)",
+            "S(Train)",
+            "Sdev(Train)",
+            "SSR(Train)",
+            "R2(Invisible training)",
+            "RMSE(Invisible training)",
+            "Q2(Invisible training)",
+            "Fisher(Invisible training)",
+            "S(Invisible training)",
+            "R2(Calibration)",
+            "RMSE(Calibration)",
+            "Q2(Calibration)",
+            "Fisher(Calibration)",
+            "S(calibration)",
+            "R2(Test)",
+            "RMSE(Test)",
+            "R2adj(Test)",
+            "Fisher(Test)",
+            "S(Test)",
+            "Sdev(Test)",
+            "SSR(Test)",
+            "Accuracy(Train)",
+            "Specificity(Train)",
+            "Sensitivity(Train)",
+            "Accuracy(Internal Valid)",
+            "Specificity(Internal Valid)",
+            "Sensitivity(Internal Valid)",
+            "Accuracy(Test)",
+            "Specificity(Test)",
+            "Sensitivity(Test)"
+        };
+        Dictionary<string, string> dict = new Dictionary<string, string>()
         {
        {
         "Endpoint",
@@ -28,9 +86,17 @@ namespace VegaAddins.Qsar
             {
                 dict.Add("Test organisms (species)", Modelinfo["Test organisms (species)"]);
             }
-        
+            if (Modelinfo["QMRFlink"] != "null")
+            {
+                dict.Add("QMRF", Modelinfo["QMRFlink"]);
+            }
+            foreach (string Colname in Metadatalist)
+                if (Modelinfo[Colname] != "")
+                {
+                    dict.Add(Colname, Modelinfo[Colname]);
+                }
 
-    return dict;
+            return dict;
         }
 
 
