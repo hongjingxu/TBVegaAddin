@@ -18,7 +18,7 @@ namespace VegaAddins.Qsar
     {
 
         private readonly Dictionary<string, string> Modelinfo;
-
+        private string _qmrflocation;
 
         public TbObjectFlags Flags { get; }
 
@@ -67,31 +67,7 @@ namespace VegaAddins.Qsar
         public IReadOnlyList<QsarDescriptorInfo> XDescriptors { get; private set; }
 
 
-        public string QmrfLocation
-        {
-            //getvega
-
-            //{
-            //    if (Modelinfo["QMRFlink"] != "null")
-            //    {
-            //        return Modelinfo["QMRFlink"];
-            //    }
-            //    return "https://www.vegahub.eu/vegahub-dwn/qmrf/qmrf-readme.txt";
-
-
-            //}
-            //get { return System.Reflection.Assembly.GetExecutingAssembly().CodeBase.Replace("VegaAddins.dll", "guide/" + Modelinfo["GuideUrl"]); }
-            get
-            {
-                if (Modelinfo["QMRFlink"] != "null")
-                {
-                    return Modelinfo["QMRFlink"];
-                }
-                {
-                    return (string)null;
-                }
-            }
-        }
+        public string QmrfLocation  {   get => this._qmrflocation;   private set => _qmrflocation = value;  }
 
         public TbQsarStatistics Statistics
         {
@@ -144,6 +120,10 @@ namespace VegaAddins.Qsar
 
         public bool InitFactory(IList<string> errorLog, ITbInitTask initTask)
         {
+            
+                    this._qmrflocation = Modelinfo["QMRFlink"];
+
+            
             ////TODO add all units
 
             //allScales = initTask.ObjectCatalog.GetAllScales();
