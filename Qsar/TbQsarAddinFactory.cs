@@ -159,9 +159,9 @@ namespace VegaAddins.Qsar
                 return (TbScale)new TbRatioScale(TbScale.MolarConcentration, "mol/L");
             }
             //generalize with unit family
-            if (Modelinfo["Endpoint"] == "BCF")
+            if (Modelinfo["UnitFamily"] == "Specific volume")
             {
-                return (TbScale)new TbRatioScale(TbScale.SpecificVolume, Modelinfo["Unit"]);
+                return (TbScale)new TbRatioScale(TbScale.SpecificVolume, TbScale.SpecificVolume.BaseUnit);
             }
             if (Modelinfo["UnitFamily"] == "Mass concentration")
             {
@@ -173,17 +173,40 @@ namespace VegaAddins.Qsar
                 return (TbScale)new TbRatioScale(TbScale.MolarConcentration, Modelinfo["Unit"]);
 
             }
+            //if (Modelinfo["UnitFamily"] == "Mass fraction")
+            //{
+            //    return (TbScale)new TbRatioScale(TbScale.MassFraction, "mg/kg");
+
+            //}
+            if (Modelinfo["UnitFamily"] == "Pressure per mole")
+            {
+                return (TbScale)new TbRatioScale(TbScale.PressurePerMole, TbScale.PressurePerMole.BaseUnit);
+
+            }
             //Time Doesn't support Unit conversion TODO ask LMC how to add Unit conversion, for now convert in prediction
             if (Modelinfo["UnitFamily"] == "Time")
             {
-                return (TbScale)new TbRatioScale(TbScale.Time, "d");
+                return (TbScale)new TbRatioScale(TbScale.Time, Modelinfo["UnitName"]);
+
+            }
+            if (Modelinfo["UnitFamily"] == "Administered dose(amount of substance)")
+            {
+                return (TbScale)new TbRatioScale(TbScale.AdministeredDose_mass, "mg/kg/day");
+
+            }
+            
+            //try to uniform skin permeation units
+            if (Modelinfo["UnitFamily"] == "Dose Rate (Area)")
+            {
+                return new TbRatioScale(Modelinfo["UnitFamily"], Modelinfo["UnitFamily"], Guid.Parse(Modelinfo["ClassesGUID"]), Modelinfo["Unit"]);
 
             }
 
 
             if (Modelinfo["Classes"] != "?")
             {
-                string[] classes = Modelinfo["Classes"].Split(new[] { ";" }, StringSplitOptions.None); ;
+                //added a replacer to eliminate "
+                string[] classes = Modelinfo["Classes"].Replace("\"", "").Split(new[] { ";" }, StringSplitOptions.None); ;
                 return new TbOrdinalScale(Modelinfo["tag"], Modelinfo["UnitFamily"], Guid.Parse(Modelinfo["ClassesGUID"]), classes);
             }
 
@@ -193,7 +216,8 @@ namespace VegaAddins.Qsar
                 return TbRatioScale.EmptyRatioScale;
             }
             //TODO add the correct tag
-            return new TbRatioScale(Modelinfo["tag"], Modelinfo["UnitFamily"], Guid.Parse(Modelinfo["ClassesGUID"]), Modelinfo["Unit"]);
+            //return new TbRatioScale(Modelinfo["UnitFamily"], Modelinfo["UnitFamily"], Guid.Parse(Modelinfo["ClassesGUID"]), Modelinfo["Unit"]);
+            return TbRatioScale.EmptyRatioScale;
         }
     }
 }

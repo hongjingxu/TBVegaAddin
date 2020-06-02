@@ -64,9 +64,10 @@ namespace VegaAddins.Qsar
 
             if (this.Modelinfo["Unit"] == "a-dimensional")
             {
-                double lambda = double.Parse(this.Modelinfo["Lambda"]);
+ //labda is read from csv, for this reason should follow different rules than other parsers
+                double lambda = double.Parse(Modelinfo["Lambda"], CultureInfo.InvariantCulture);
 
-                double value = double.Parse(stringvalue, CultureInfo.InvariantCulture);
+                double value = DoubleParser(stringvalue);
 
                 return (TbData)new TbData(new TbUnit(ScaleDeclaration.Name, "mmol/L"), BoxCox(lambda, value));
 
@@ -77,17 +78,19 @@ namespace VegaAddins.Qsar
                 //    return (TbData)new TbData(qsarUnit, runmodel(target, this.Modelinfo["tag"], "prediction"));
 
             }
-            //workaroud for the lack of conversion for Time unitfamily
-            if (this.Modelinfo["Unit"] == "log(days)")
-            {
+            //workaroud for the lack of conversion for Log unitfamily
+            //Regex regex = new Regex(@"log\(.*");
+            ////Doesn't work, don't ask why
+            //if (regex.IsMatch(this.Modelinfo["Unit"]))
+            //{ 
+            //    double value = DoubleParser(stringvalue);
 
-                double value = double.Parse(stringvalue, CultureInfo.InvariantCulture);
-
-                return (TbData)new TbData(new TbUnit(ScaleDeclaration.Name, "d"), Math.Pow(10, value));
-            }
+            //    return (TbData)new TbData(new TbUnit(ScaleDeclaration.Name, this.Modelinfo["UnitName"]), Math.Pow(10, value));
+            //}
             else
             {
-                double value = double.Parse(stringvalue, CultureInfo.InvariantCulture);
+
+             double value = DoubleParser(stringvalue);
                 return (TbData)new TbData(qsarUnit, value);
             }
         }
@@ -122,7 +125,11 @@ namespace VegaAddins.Qsar
                 AdditionalMetadata.Add("Analogues' SMILES", ModelPred["Similar_molecules_smiles"]);
             if (Modelinfo.ContainsKey("QMRFlink"))
                 AdditionalMetadata.Add("QMRF", Modelinfo["QMRFlink"]);
+            //if (Modelinfo.ContainsKey("Lambda"))
+            //{
+            // AdditionalMetadata.Add("Lambda", double.Parse(this.Modelinfo["Lambda"], CultureInfo.InvariantCulture).ToString());
 
+            //}
             Dictionary<TbObjectId, TbData> matrixdescriptorvalues = new Dictionary<TbObjectId, TbData>()
             {
               {
@@ -176,7 +183,7 @@ namespace VegaAddins.Qsar
             double ADI;
             try
             {
-                ADI = double.Parse(ModelPred["ADI"]);
+                ADI = DoubleParser(ModelPred["ADI"]);
             }
             catch
             {
@@ -265,6 +272,12 @@ namespace VegaAddins.Qsar
         public double BoxCox(double lambda, double value)
         {
             return Math.Pow(value * lambda + 1.0, 1.0 / lambda);
+        }
+        public double DoubleParser( string value)
+        {
+            //return double.Parse(value, System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.NumberFormatInfo.InvariantInfo);
+            //double.Parse(value, CultureInfo.InvariantCulture);
+            return double.Parse(value);
         }
 
 
