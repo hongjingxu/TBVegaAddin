@@ -186,7 +186,7 @@ namespace VegaAddins.Qsar
             //Time Doesn't support Unit conversion TODO ask LMC how to add Unit conversion, for now convert in prediction
             if (Modelinfo["UnitFamily"] == "Time")
             {
-                return (TbScale)new TbRatioScale(TbScale.Time, Modelinfo["UnitName"]);
+                return (TbScale)new TbRatioScale(TbScale.Time, TbScale.Time.BaseUnit);
 
             }
             if (Modelinfo["UnitFamily"] == "Administered dose(amount of substance)")

@@ -58,7 +58,12 @@ namespace VegaAddins
                 //3.3 Add an entry for each retrieved header.
                 for (int i = 0; i < columnHeaders.Length; i++)
                 {
-                    newDict.Add(columnHeaders[i], cells[i]);
+                    if (cells[i] == "micromol/L") {
+                        newDict.Add(columnHeaders[i], "µmol/L");
+                    }
+                    else {
+                        newDict.Add(columnHeaders[i], cells[i]);
+                    }
                 }
                 ////add java additional info
                 //vdi.@run(newDict["tag"]);
@@ -70,7 +75,7 @@ namespace VegaAddins
                 //newDict.Add("QMRFLink", vdi.getQMRFLink());
 
                 //3.4 Add the dictionary to the resulting list
-                Models.Add(newDict);
+                if (newDict["Presenza Guida"]=="x")     Models.Add(newDict);
 
             }
             return Models;

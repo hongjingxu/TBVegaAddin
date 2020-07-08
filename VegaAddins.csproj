@@ -36,18 +36,13 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="Toolbox.Declarations, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>B:\Program Files (x86)\QSAR Toolbox\QSAR Toolbox 4.4\Toolbox Server\Bin\Toolbox.Declarations.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Toolbox.Docking.Api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>B:\Program Files (x86)\QSAR Toolbox\QSAR Toolbox 4.4\Toolbox Server\Bin\Toolbox.Docking.Api.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\QSAR Toolbox\QSAR Toolbox 4.4\Toolbox Server\Bin\Toolbox.Docking.Api.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="VegaDockCLI.j4n, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\VegaDockCLI.j4n.dll</HintPath>
+      <HintPath>.\VegaDockCLI.j4n.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -27,7 +27,8 @@ namespace VegaAddins.Qsar
             this.Modelinfo = Modelinfo;
             this.ScaleDeclaration = ScaleDeclaration;
             this.objectId = objectId;
-            this.qsarUnit = new TbUnit(ScaleDeclaration.Name, Modelinfo["Unit"]);
+            //CHANGED TO UNITNAME, not anymore log units
+            this.qsarUnit = new TbUnit(ScaleDeclaration.Name, Modelinfo["UnitName"]);
 
         }
 
@@ -79,14 +80,23 @@ namespace VegaAddins.Qsar
 
             }
             //workaroud for the lack of conversion for Log unitfamily
-            //Regex regex = new Regex(@"log\(.*");
-            ////Doesn't work, don't ask why
-            //if (regex.IsMatch(this.Modelinfo["Unit"]))
-            //{ 
-            //    double value = DoubleParser(stringvalue);
+            Regex regexloginv = new Regex(@"log\(1/.*");
+            //Doesn't work, don't ask why
+            if (regexloginv.IsMatch(this.Modelinfo["Unit"]))
+            {
+                double value = DoubleParser(stringvalue);
 
-            //    return (TbData)new TbData(new TbUnit(ScaleDeclaration.Name, this.Modelinfo["UnitName"]), Math.Pow(10, value));
-            //}
+                return (TbData)new TbData(new TbUnit(ScaleDeclaration.Name, this.Modelinfo["UnitName"]), Math.Pow(10, value*-1));
+            }
+
+            Regex regex = new Regex(@"log\(.*");
+            //Doesn't work, don't ask why
+            if (regex.IsMatch(this.Modelinfo["Unit"]))
+            {
+                double value = DoubleParser(stringvalue);
+
+                return (TbData)new TbData(new TbUnit(ScaleDeclaration.Name, this.Modelinfo["UnitName"]), Math.Pow(10, value));
+            }
             else
             {
 
@@ -180,16 +190,18 @@ namespace VegaAddins.Qsar
             {
                 return TbDomainStatus.Undefined;
             }
-            double ADI;
-            try
-            {
-                ADI = DoubleParser(ModelPred["ADI"]);
-            }
-            catch
-            {
-                return TbDomainStatus.Undefined;
-            }
-            return ADI > 0.7 ? TbDomainStatus.InDomain : TbDomainStatus.OutOfDomain;
+            //double ADI;
+            //try
+            //{
+            //    ADI = DoubleParser(ModelPred["ADI"]);
+            //}
+            //catch
+            //{
+            //    return TbDomainStatus.Undefined;
+            //}
+            //return ADI > 0.7 ? TbDomainStatus.InDomain : TbDomainStatus.OutOfDomain;
+            Regex regex = new Regex(@".*good reliability.*");
+           return regex.IsMatch(ModelPred["assessment_verbose"]) ? TbDomainStatus.InDomain : TbDomainStatus.OutOfDomain;
         }
 
         public string runmodel(ITbBasket target, string output, Dictionary<string, string> Modelinfo)
