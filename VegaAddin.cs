@@ -75,7 +75,7 @@ namespace VegaAddins
                 //newDict.Add("QMRFLink", vdi.getQMRFLink());
 
                 //3.4 Add the dictionary to the resulting list
-                if (newDict["Presenza Guida"]=="x")     Models.Add(newDict);
+                if (newDict["Guideexist"]=="x"| newDict["QMRFexist"] == "x")     Models.Add(newDict);
 
             }
             return Models;

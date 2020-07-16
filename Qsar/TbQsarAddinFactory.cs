@@ -120,8 +120,8 @@ namespace VegaAddins.Qsar
 
         public bool InitFactory(IList<string> errorLog, ITbInitTask initTask)
         {
-            
-                    this._qmrflocation = Modelinfo["QMRFlink"];
+
+                    this._qmrflocation = "https://www.vegahub.eu/vegahub-dwn/qmrf/" + Modelinfo["QMRFlink"];
 
             
             ////TODO add all units
