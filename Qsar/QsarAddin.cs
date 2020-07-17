@@ -2,6 +2,7 @@
 using net.sf.jni4net;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -94,6 +95,7 @@ namespace VegaAddins.Qsar
             if (regex.IsMatch(this.Modelinfo["Unit"]))
             {
                 double value = DoubleParser(stringvalue);
+                
 
                 return (TbData)new TbData(new TbUnit(ScaleDeclaration.Name, this.Modelinfo["UnitName"]), Math.Pow(10, value));
             }
@@ -287,8 +289,9 @@ namespace VegaAddins.Qsar
         }
         public double DoubleParser( string value)
         {
-            return double.Parse(value, System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.NumberFormatInfo.InvariantInfo);
-            //double.Parse(value, CultureInfo.InvariantCulture);
+            CultureInfo culture = new CultureInfo("en-US");
+            //return double.Parse(value, System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.NumberFormatInfo.InvariantInfo);
+            return double.Parse(value, culture.NumberFormat);
             //return double.Parse(value);
         }
 
