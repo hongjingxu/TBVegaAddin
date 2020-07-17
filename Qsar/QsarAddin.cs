@@ -66,7 +66,7 @@ namespace VegaAddins.Qsar
             if (this.Modelinfo["Unit"] == "a-dimensional")
             {
  //labda is read from csv, for this reason should follow different rules than other parsers
-                double lambda = double.Parse(Modelinfo["Lambda"], CultureInfo.InvariantCulture);
+                double lambda = DoubleParser(Modelinfo["Lambda"]);
 
                 double value = DoubleParser(stringvalue);
 
@@ -200,8 +200,8 @@ namespace VegaAddins.Qsar
             //    return TbDomainStatus.Undefined;
             //}
             //return ADI > 0.7 ? TbDomainStatus.InDomain : TbDomainStatus.OutOfDomain;
-            Regex regex = new Regex(@".*good reliability.*");
-           return regex.IsMatch(ModelPred["assessment_verbose"]) ? TbDomainStatus.InDomain : TbDomainStatus.OutOfDomain;
+            Regex regex = new Regex(@".*low reliability.*");
+           return regex.IsMatch(ModelPred["assessment_verbose"]) ? TbDomainStatus.OutOfDomain : TbDomainStatus.InDomain;
         }
 
         public string runmodel(ITbBasket target, string output, Dictionary<string, string> Modelinfo)
@@ -235,18 +235,18 @@ namespace VegaAddins.Qsar
             VegaDockObject vdo = new VegaDockObject();
             vdo.run(tag, target.Chemical.Smiles);
 
-            if (vdo.error.length() != 0)
+            if (VegaDockObject.error.length() != 0)
             {
-                ModelPred.Add("error", vdo.error);
+                ModelPred.Add("error", VegaDockObject.error);
                 return ModelPred;
             }
-            ModelPred.Add("prediction", vdo.prediction);
-            ModelPred.Add("assessment", vdo.assessment);
-            ModelPred.Add("assessment_verbose", vdo.assessment_verbose);
-            ModelPred.Add("Experimental", vdo.Experimental);
-            ModelPred.Add("ADI", vdo.ADI);
-            ModelPred.Add("Similar_molecules_index", vdo.Similar_molecules_index);
-            ModelPred.Add("Similar_molecules_smiles", vdo.Similar_molecules_smiles);
+            ModelPred.Add("prediction", VegaDockObject.prediction);
+            ModelPred.Add("assessment", VegaDockObject.assessment);
+            ModelPred.Add("assessment_verbose", VegaDockObject.assessment_verbose);
+            ModelPred.Add("Experimental", VegaDockObject.Experimental);
+            ModelPred.Add("ADI", VegaDockObject.ADI);
+            ModelPred.Add("Similar_molecules_index", VegaDockObject.Similar_molecules_index);
+            ModelPred.Add("Similar_molecules_smiles", VegaDockObject.Similar_molecules_smiles);
 
 
             return ModelPred;
@@ -287,9 +287,9 @@ namespace VegaAddins.Qsar
         }
         public double DoubleParser( string value)
         {
-            //return double.Parse(value, System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.NumberFormatInfo.InvariantInfo);
+            return double.Parse(value, System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.NumberFormatInfo.InvariantInfo);
             //double.Parse(value, CultureInfo.InvariantCulture);
-            return double.Parse(value);
+            //return double.Parse(value);
         }
 
 
