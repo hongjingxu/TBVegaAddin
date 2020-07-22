@@ -159,6 +159,10 @@ namespace VegaAddins.Qsar
                 return (TbScale)new TbRatioScale(TbScale.MolarConcentration, "mol/L");
             }
             //generalize with unit family
+            if (Modelinfo["UnitFamily"] == "Unknown")
+            {
+                return (TbScale)new TbRatioScale(TbScale.EmptyRatioScale, TbScale.EmptyRatioScale.BaseUnit);
+            }
             if (Modelinfo["UnitFamily"] == "Specific volume")
             {
                 return (TbScale)new TbRatioScale(TbScale.SpecificVolume, TbScale.SpecificVolume.BaseUnit);

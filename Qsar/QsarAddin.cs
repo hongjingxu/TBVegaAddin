@@ -206,18 +206,18 @@ namespace VegaAddins.Qsar
            return regex.IsMatch(ModelPred["assessment_verbose"]) ? TbDomainStatus.OutOfDomain : TbDomainStatus.InDomain;
         }
 
-        public string runmodel(ITbBasket target, string output, Dictionary<string, string> Modelinfo)
-        {
-            string tag = this.Modelinfo["tag"];
-            var setup = new BridgeSetup(false);
-            //setup.AddAllJarsClassPath(@"B:\ToolboxAddinExamples\lib");
+        //public string runmodel(ITbBasket target, string output, Dictionary<string, string> Modelinfo)
+        //{
+        //    string tag = this.Modelinfo["tag"];
+        //    var setup = new BridgeSetup(false);
+        //    //setup.AddAllJarsClassPath(@"B:\ToolboxAddinExamples\lib");
 
-            setup.AddAllJarsClassPath(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location));
-            Bridge.CreateJVM(setup);
-            Bridge.RegisterAssembly(typeof(VegaDockInterface).Assembly);
-            java.lang.String stdout = VegaDockInterface.@getValues(tag, output, target.Chemical.Smiles);
-            return stdout;
-        }
+        //    setup.AddAllJarsClassPath(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location));
+        //    Bridge.CreateJVM(setup);
+        //    Bridge.RegisterAssembly(typeof(VegaDockInterface).Assembly);
+        //    java.lang.String stdout = VegaDockInterface.@getValues(tag, output, target.Chemical.Smiles);
+        //    return stdout;
+        //}
         public Dictionary<string, string> RetrieveModelPreD(ITbBasket target, Dictionary<string, string> Modelinfo)
         {
             Dictionary<string, string> ModelPred = new Dictionary<string, string>();
