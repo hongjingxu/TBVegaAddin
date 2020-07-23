@@ -19,6 +19,8 @@ namespace VegaAddins.Qsar
 
         private readonly Dictionary<string, string> Modelinfo;
         private string _qmrflocation;
+        private readonly TbUnit _calcUnit;
+
 
         public TbObjectFlags Flags { get; }
 
@@ -73,7 +75,7 @@ namespace VegaAddins.Qsar
         {
             get
             {
-                return QsarAddinDefinitions.M4RatioModelStatistics;
+                return QsarAddinDefinitions.M4RatioModelStatistics(this.Modelinfo["tag"]);
             }
         }
 
@@ -115,6 +117,7 @@ namespace VegaAddins.Qsar
 
 
             this.ScaleDeclaration = returnscale(Modelinfo);
+            _calcUnit = new TbUnit(ScaleDeclaration.Name, Modelinfo["UnitName"]);
 
         }
 
@@ -136,12 +139,12 @@ namespace VegaAddins.Qsar
         }
         public IReadOnlyList<ChemicalWithData> TrainingSet(ITbWorkTask task)
         {
-            return (IReadOnlyList<ChemicalWithData>)null;
+            return QsarAddinDefinitions.GetSet(this.Modelinfo, this.ScaleDeclaration, "Training");
         }
 
         public IReadOnlyList<ChemicalWithData> GetTestSet(ITbWorkTask task)
         {
-            return (IReadOnlyList<ChemicalWithData>)null;
+            return QsarAddinDefinitions.GetSet(this.Modelinfo, this.ScaleDeclaration, "Test");
         }
 
         public ITbQsar GetQsar(ITbWorkTask task)

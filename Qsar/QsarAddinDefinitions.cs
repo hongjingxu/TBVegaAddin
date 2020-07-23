@@ -1,5 +1,9 @@
-﻿using System;
+﻿using insilico.vega.vegadockcli;
+using net.sf.jni4net;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using Toolbox.Docking.Api.Chemical;
 using Toolbox.Docking.Api.Data;
 using Toolbox.Docking.Api.Objects;
@@ -31,11 +35,11 @@ namespace VegaAddins.Qsar
             "Test guideline",
             "Reference",
             "Reference Link",
-            "n(Train)",
-            "n(Invisible training)",
-            "n(Internal Valid)",
-            "n(Calibration)",
-            "n(Test)",
+            //"n(Train)",
+            //"n(Invisible training)",
+            //"n(Internal Valid)",
+            //"n(Calibration)",
+            //"n(Test)",
             "R2(Train)",
             "RMSE(Train)",
             "R2adj(Train)",
@@ -99,15 +103,46 @@ namespace VegaAddins.Qsar
             return dict;
         }
 
+        public static IReadOnlyList<ChemicalWithData> GetSet(Dictionary<string, string> Modelinfo, TbScale ScaleDeclaration, String Set)
+        {
+            var setup = new BridgeSetup(false);
+            //setup.AddAllJarsClassPath(@"B:\ToolboxAddinExamples\lib");
+
+            setup.AddAllJarsClassPath(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location));
+            Bridge.CreateJVM(setup);
+            Bridge.RegisterAssembly(typeof(ChemicalinSet).Assembly);
+            java.util.List list = ChemicalinSet.getDataset(Modelinfo["tag"], Set);
+
+            List<ChemicalWithData> SetList = new List<ChemicalWithData>();
+
+            for (int i = 0; i < list.size(); i++)
+                 {
+
+                TbData Mockdescriptordata = new TbData(new TbUnit(TbScale.EmptyRatioScale.FamilyGroup, TbScale.EmptyRatioScale.BaseUnit), new double?());
+                ChemicalinSet cur_Chemical = (ChemicalinSet)list.get(i);
+                TbData cur_exp = (TbData)Utilities.ConvertData(cur_Chemical.getExperimental(), ScaleDeclaration, Modelinfo);
+                SetList.Add(new ChemicalWithData(cur_Chemical.getCAS(), new[] { "N.A." }, cur_Chemical.getSmiles(),
+                    new TbDescribedData[] { new TbDescribedData(Mockdescriptordata, null) },
+                    new TbDescribedData(cur_exp, null)));
+        }
+            return SetList;
+        }
+
 
 
         //works only with a training set
-        public static TbQsarStatistics M4RatioModelStatistics
+        public static TbQsarStatistics M4RatioModelStatistics(String tag)
         {
-            get
-            {
-                return new TbQsarStatistics(new int?(0), new int?(0), new int?(0), new int?(0));
-            }
+            //Not Working
+            var setup = new BridgeSetup(false);
+            //setup.AddAllJarsClassPath(@"B:\ToolboxAddinExamples\lib");
+            setup.AddAllJarsClassPath(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location));
+            Bridge.CreateJVM(setup);
+            Bridge.RegisterAssembly(typeof(ChemicalinSet).Assembly);
+            int nMolTrain = ChemicalinSet.getnMolTrain(tag);
+            int nMolTest = ChemicalinSet.getnMolTest(tag);
+            return new TbQsarStatistics(nMolTrain, nMolTrain, nMolTest, nMolTest);
+         
         }
 
         public static TbObjectAbout GetM4ObjectAbout(Dictionary<string, string> Modelinfo)
@@ -130,4 +165,6 @@ namespace VegaAddins.Qsar
             }) ;
         }
     }
+
+    
 }
