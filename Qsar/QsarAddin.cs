@@ -77,8 +77,8 @@ namespace VegaAddins.Qsar
                 AdditionalMetadata.Add("Brief Explanation", ModelPred["assessment_verbose"]);
             if (ModelPred.ContainsKey("Similar_molecules_smiles"))
                 AdditionalMetadata.Add("Analogues' SMILES", ModelPred["Similar_molecules_smiles"]);
-            if (Modelinfo.ContainsKey("QMRFlink"))
-                AdditionalMetadata.Add("QMRF", Modelinfo["QMRFlink"]);
+            //if (Modelinfo.ContainsKey("QMRFlink"))
+            //    AdditionalMetadata.Add("QMRF", Modelinfo["QMRFlink"]);
             //if (Modelinfo.ContainsKey("Lambda"))
             //{
             // AdditionalMetadata.Add("Lambda", double.Parse(this.Modelinfo["Lambda"], CultureInfo.InvariantCulture).ToString());

@@ -140,6 +140,7 @@ namespace VegaAddins.Qsar
         public IReadOnlyList<ChemicalWithData> TrainingSet(ITbWorkTask task)
         {
             return QsarAddinDefinitions.GetSet(this.Modelinfo, this.ScaleDeclaration, "Training");
+
         }
 
         public IReadOnlyList<ChemicalWithData> GetTestSet(ITbWorkTask task)

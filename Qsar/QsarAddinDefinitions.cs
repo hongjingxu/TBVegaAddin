@@ -2,6 +2,8 @@
 using net.sf.jni4net;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using Toolbox.Docking.Api.Chemical;
@@ -105,6 +107,8 @@ namespace VegaAddins.Qsar
 
         public static IReadOnlyList<ChemicalWithData> GetSet(Dictionary<string, string> Modelinfo, TbScale ScaleDeclaration, String Set)
         {
+            List<ChemicalWithData> SetList = new List<ChemicalWithData>();
+            
             var setup = new BridgeSetup(false);
             //setup.AddAllJarsClassPath(@"B:\ToolboxAddinExamples\lib");
 
@@ -113,7 +117,9 @@ namespace VegaAddins.Qsar
             Bridge.RegisterAssembly(typeof(ChemicalinSet).Assembly);
             java.util.List list = ChemicalinSet.getDataset(Modelinfo["tag"], Set);
 
-            List<ChemicalWithData> SetList = new List<ChemicalWithData>();
+            if (list.size()==0){
+                return SetList;
+            }
 
             for (int i = 0; i < list.size(); i++)
                  {
@@ -155,7 +161,8 @@ namespace VegaAddins.Qsar
               /* authors*/ "Istituto di Ricerche Farmacologiche Mario Negri IRCCS Laboratory of Environmental Chemistry and Toxicology Via Mario Negri 2, 20156 Milan, Italy",
               /* url */ "https://www.vegahub.eu/",
               /* name*/ "VEGA - " + Modelinfo["Modelname"],
-               /*helpFile*/ System.Reflection.Assembly.GetExecutingAssembly().CodeBase.Replace("VegaAddins.dll", "guide/" + Modelinfo["GuideUrl"]),
+              "https://www.vegahub.eu/vegahub-dwn/guide/"+ Modelinfo["GuideUrl"],
+               /*helpFile*/ /*System.Reflection.Assembly.GetExecutingAssembly().CodeBase.Replace("VegaAddins.dll", "guide/" + Modelinfo["GuideUrl"]),*/
             /*additionalInfo */
             (IEnumerable<TbObjectAboutTextPair>)new TbObjectAboutTextPair[3]
             {
