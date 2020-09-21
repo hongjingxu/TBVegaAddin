@@ -145,7 +145,7 @@ namespace VegaAddins.Qsar
             //}
             //return ADI > 0.7 ? TbDomainStatus.InDomain : TbDomainStatus.OutOfDomain;
             Regex regex = new Regex(@".*low reliability.*");
-           return regex.IsMatch(ModelPred["assessment_verbose"]) ? TbDomainStatus.OutOfDomain : TbDomainStatus.InDomain;
+           return regex.IsMatch(ModelPred["assessment"]) ? TbDomainStatus.OutOfDomain : TbDomainStatus.InDomain;
         }
 
         //public string runmodel(ITbBasket target, string output, Dictionary<string, string> Modelinfo)
