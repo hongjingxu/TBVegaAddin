@@ -163,7 +163,7 @@ namespace VegaAddins.Qsar
                 return (TbScale)new TbRatioScale(TbScale.MolarConcentration, "mol/L");
             }
             //generalize with unit family
-            if (Modelinfo["UnitFamily"] == "Unknown")
+            if (Modelinfo["UnitFamily"] == "Unknown"| Modelinfo["UnitFamily"] == "Partition Coefficient")
             {
                 return (TbScale)new TbRatioScale(TbScale.EmptyRatioScale, TbScale.EmptyRatioScale.BaseUnit);
             }
@@ -181,11 +181,11 @@ namespace VegaAddins.Qsar
                 return (TbScale)new TbRatioScale(TbScale.MolarConcentration, Modelinfo["Unit"]);
 
             }
-            //if (Modelinfo["UnitFamily"] == "Mass fraction")
-            //{
-            //    return (TbScale)new TbRatioScale(TbScale.MassFraction, "mg/kg");
+            if (Modelinfo["UnitFamily"] == "Mass fraction")
+            {
+                return (TbScale)new TbRatioScale(TbScale.ConcentrationInBody_mass, Modelinfo["Unit"]);
 
-            //}
+            }
             if (Modelinfo["UnitFamily"] == "Pressure per mole")
             {
                 return (TbScale)new TbRatioScale(TbScale.PressurePerMole, TbScale.PressurePerMole.BaseUnit);
