@@ -34,7 +34,6 @@ namespace VegaAddins.Qsar
 "Type of method",
 "Assay provider",
 "Test guideline",
-"QMRF",
 "Reference",
 "Reference Link",
 "R2(Train)",
