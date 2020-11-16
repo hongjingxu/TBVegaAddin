@@ -211,7 +211,7 @@ namespace VegaAddins.Qsar
             if (Modelinfo["UnitFamily"] == "Dose Rate (Area)")
             {
                 return new TbRatioScale(Modelinfo["UnitFamily"], Modelinfo["UnitFamily"], Guid.Parse(Modelinfo["ClassesGUID"]), Modelinfo["Unit"]);
-
+                
             }
 
 

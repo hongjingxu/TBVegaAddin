@@ -67,7 +67,7 @@ namespace VegaAddins.Qsar
 
             Regex regex = new Regex(@"log\(.*");
             //Doesn't work, don't ask why
-            if (regex.IsMatch(Modelinfo["Unit"]))
+            if (regex.IsMatch(Modelinfo["Unit"])& Modelinfo["Unit"]!="log(cm/h)")
             {
                 double value = DoubleParser(stringvalue);
 
