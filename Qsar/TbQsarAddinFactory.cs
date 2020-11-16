@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -173,7 +174,7 @@ namespace VegaAddins.Qsar
             }
             if (Modelinfo["UnitFamily"] == "Mass concentration")
             {
-                return (TbScale)new TbRatioScale(TbScale.MassConcentration, Modelinfo["Unit"]);
+                return (TbScale)new TbRatioScale(TbScale.MassConcentration, Modelinfo["UnitName"]);
 
             }
             if (Modelinfo["UnitFamily"] == "Molar concentration")
@@ -181,9 +182,12 @@ namespace VegaAddins.Qsar
                 return (TbScale)new TbRatioScale(TbScale.MolarConcentration, Modelinfo["Unit"]);
 
             }
+            //doesn't work. Ask help to LMC
             if (Modelinfo["UnitFamily"] == "Mass fraction")
             {
-                return (TbScale)new TbRatioScale(TbScale.ConcentrationInBody_mass, Modelinfo["Unit"]);
+                //throw new WarningException(TbScale.MassFraction.FamilyGroup + TbScale.MassFraction.Identity + TbScale.MassFraction.Name + "\n" +
+                //    TbScale.ConcentrationInBody_mass.Name + TbScale.ConcentrationInBody_mass.Identity + TbScale.ConcentrationInBody_mass.Name);
+                return (TbScale)new TbRatioScale(Modelinfo["Endpoint"], "Mass fraction", Guid.Parse(Modelinfo["ClassesGUID"]), Modelinfo["UnitName"]);
 
             }
             if (Modelinfo["UnitFamily"] == "Pressure per mole")
