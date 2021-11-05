@@ -96,7 +96,7 @@ namespace VegaAddins.Qsar
             TbMetadata metadata = new TbMetadata((IReadOnlyDictionary<string, string>)AdditionalMetadata, (IReadOnlyDictionary<string, TbData>)ADImetadata);
 
             //return new PredictionAddin(predictedTbData, predictionDescription, xData);
-            return new PredictionAddin(predictedTbData, metadata, matrixdescriptorvalues);
+            return new PredictionAddin(predictedTbData, metadata, matrixdescriptorvalues,null);
         }
 
 
