@@ -122,11 +122,11 @@ namespace VegaAddins.Qsar
 
         }
 
-        public bool InitFactory(IList<string> errorLog, ITbInitTask initTask)
+        public bool InitFactory(IList<string> errorLog, out int? hash,ITbInitTask initTask)
         {
 
                     this._qmrflocation = "https://www.vegahub.eu/vegahub-dwn/qmrf/" + Modelinfo["QMRFlink"];
-
+                    hash = null;
             
             ////TODO add all units
 
@@ -231,5 +231,12 @@ namespace VegaAddins.Qsar
             //return new TbRatioScale(Modelinfo["UnitFamily"], Modelinfo["UnitFamily"], Guid.Parse(Modelinfo["ClassesGUID"]), Modelinfo["Unit"]);
             return TbRatioScale.EmptyRatioScale;
         }
+
+        public IReadOnlyList<ISuportingChemicals> AdditionalLists(ITbWorkTask task)
+        {
+            throw new NotImplementedException();
+        }
+
+ 
     }
 }
